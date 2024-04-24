@@ -17,7 +17,7 @@ class LF():
     def BrownianTrans_Realistic(self, DT, N, n_d, deltaT, tE, sigma0, s0, R=1./6):
         """ BrownianTrans_Realistic function
         Generates displacements Delta from equations 2--5
-        of (Michalet, X.; Berglund, A. J.
+        of Michalet, X.; Berglund, A. J.
         Phys. Rev. E 2012, 85 (6), 061916.
         https://doi.org/10.1103/PhysRevE.85.061916.
         More realistic Brownian motion assuming tracked with a camera
@@ -42,11 +42,9 @@ class LF():
         sigma = np.multiply(sigma0, np.sqrt(np.add(1., 
                                 np.divide(np.multiply(DT, tE), 
                                             np.square(s0))))) # make localisation error parameter
-        x_parameter = np.subtract(np.divide(np.square(sigma), 
-                                np.multiply(DT, deltaT)), np.multiply(2., R)) # get x parameter, see equation 4 of paper
-        diagonal = np.multiply(np.multiply(np.multiply(2., DT), deltaT), 
-                               np.add(1, np.multiply(2., x_parameter))) # get diagonal
-        off_diagonal = np.multiply(np.multiply(-x_parameter, DT), deltaT)
+        
+        diagonal = 2 * DT * deltaT * (1 - 2 * R) + 2 * np.square(sigma)
+        off_diagonal = 2 * R * DT * deltaT - np.square(sigma)
         stack = np.vstack([np.full(shape=N-1, fill_value=off_diagonal), 
                            np.full(shape=N-1, fill_value=diagonal),
                         np.full(shape=N-1, fill_value=off_diagonal)]) # get off diagonals for cov matrix
@@ -58,7 +56,7 @@ class LF():
         
         return np.vstack([r0, np.cumsum(displacements, axis=1).T])
     
-    def BrownianTrans_Ideal(self, DT, NAxes, TStep, NSteps):
+    def BrownianTrans_Ideal(self, DT, n_d, deltaT, N):
         """ BrownianTrans_Ideal function
             generates random translational motion of N coordinates 
             using DT and TStep
@@ -76,11 +74,11 @@ class LF():
         # get dimensionless translational diffusion coefficient (good explanation
         # in Allen, M. P.; Tildesley, D. J. Computer Simulation of Liquids,
         # 2nd ed.; Oxford University Press, 2017)
-        sigmaT = np.sqrt(np.multiply(2., np.multiply(DT, TStep)))
+        sigmaT = np.sqrt(np.multiply(2., np.multiply(DT, deltaT)))
         
-        r0 = np.zeros([NAxes]) # initial position is 0s
+        r0 = np.zeros([n_d]) # initial position is 0s
         # generate random numbers for all steps
-        rns = np.random.normal(loc=0, scale=sigmaT, size=(NAxes, NSteps-1))
+        rns = np.random.normal(loc=0, scale=sigmaT, size=(n_d, N-1))
         # make coordinates
         coordinates = np.vstack([r0, np.cumsum(rns, axis=1).T])
 

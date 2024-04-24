@@ -17,7 +17,49 @@ class D_MLE():
         self = self
         return
     
-    def DSigma2_MLE(self, coordinates, dT, R, n_d=1, maxiter=100000, maxfun=100000):
+    def DSigma_MLE_BootStrap(self, coordinates, dT, R=1./6, n_d=1, maxiter=100000, maxfun=100000, n_samples=100):
+        """
+        Compute diffusion coefficient error estimate, and estimate of the
+        error on the dynamic localisation error, using bootstrapping.
+    
+        Args:
+            coordinates (np.ndarray): coordinates over time.
+            dT (float): Time step.
+            R (float): Motion blur coefficient.
+            n_d (int): number of dimensions. If above 1, coordinates second
+                        dimension should be same shape as this number
+            maxiter (int): maximum number of optimisation iterations to make
+            maxfun (int): maximum number of function evaluations to make
+            n_samples (int): number of boostrapped samples. default 100.
+    
+        Returns:
+            D_err (float): estimate of D value error
+            sigma_err (float): estimate of dynamic localisation std error
+        """
+        D_err = np.zeros(n_samples)
+        sigma_err = np.zeros(n_samples)
+        
+        samples = np.diff(coordinates, axis=0).ravel()
+        for i in np.arange(n_samples):
+            diff_coordinates = np.random.choice(samples, size=(coordinates.shape[0], n_d))
+            var_diff_coordinates = np.var(diff_coordinates, axis=0)
+            D_i = np.mean(var_diff_coordinates) / (2 * dT * 2)        
+            sigma2_i = np.mean(var_diff_coordinates) / 2
+    
+            # make displacements array
+            dX = np.subtract(np.diff(coordinates, axis=0),
+                             np.tile(np.mean(np.diff(coordinates, axis=0), axis=0),
+                                     (len(coordinates) - 1, 1)))
+            
+            sine_transform = np.square(dst(dX, 2, axis=0)/2.)
+            optimfunc = lambda x: -self.likelihood_subfunction(sine_transform, x[0], x[1], dT, R, n_d)
+            xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], maxiter=maxiter, maxfun=maxfun, disp=False)
+            D_err[i] = xopt[0]
+            sigma_err[i] = np.sqrt(xopt[1])
+        return np.std(D_err), np.std(sigma_err)
+
+    
+    def DSigma_MLE(self, coordinates, dT, R=1./6, n_d=1, maxiter=100000, maxfun=100000):
         """
         Compute diffusion coefficient estimate, and estimate of the
         dynamic localisation error, using the MLE approach.
@@ -33,7 +75,7 @@ class D_MLE():
     
         Returns:
             D (float): estimate of D value.
-            sigma2 (float): estimate of sigma2 value.
+            sigma (float): estimate of dynamic localisation std.
         """
         # get initial guess of D and Sigma2
         diff_coordinates = np.diff(coordinates, axis=0)
@@ -47,11 +89,11 @@ class D_MLE():
                                  (len(coordinates) - 1, 1)))
         
         sine_transform = np.square(dst(dX, 2, axis=0)/2.)
-        optimfunc = lambda x: -self.likelihood_subfunction(sine_transform, x[0], x[1], dT, R)
-        xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], maxiter=maxiter, maxfun=maxfun)
+        optimfunc = lambda x: -self.likelihood_subfunction(sine_transform, x[0], x[1], dT, R, n_d)
+        xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], maxiter=maxiter, maxfun=maxfun, disp=False)
         D = xopt[0]
-        sigma2 = xopt[1]
-        return D, sigma2
+        var = xopt[1]
+        return D, np.sqrt(var)
         
     def likelihood_subfunction(self, d_xx, D, sig2, dT, R, n_d=1):
         """
