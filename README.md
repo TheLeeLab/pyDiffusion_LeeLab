@@ -18,7 +18,8 @@ The codes are based on optimal analyses for diffusion coefficients set out in fo
 1. [Michalet and Berglund, Optimal diffusion coefficient estimation in single-particle tracking](https://link.aps.org/doi/10.1103/PhysRevE.85.061916)
 2. [Vestergaard, Blainey and Flyvbjerg, Optimal estimation of diffusion coefficients from single-particle trajectories](https://link.aps.org/doi/10.1103/PhysRevE.89.022726)
 
-the Michalet and Berglund is dependent on the authors (separate) previous two papers:
+the Michalet and Berglund is dependent on the authors' (separate) previous two papers:
+
 3. [Michalet, Mean square displacement analysis of single-particle trajectories with localization error: Brownian motion in an isotropic medium](https://link.aps.org/doi/10.1103/PhysRevE.82.041914)
 4. [Berglund, Statistics of camera-based single-particle tracking](https://link.aps.org/doi/10.1103/PhysRevE.82.011917)
 
