@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MSDFunctions module &mdash; pyDiffusion_LeeLab v0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=fa47ad08"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PlottingFunctions module" href="PlottingFunctions.html" />
+    <link rel="prev" title="LangevinFunctions module" href="LangevinFunctions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyDiffusion_LeeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CVE_Functions.html">CVE_Functions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Diffusion_MLE.html">Diffusion_MLE module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LangevinFunctions.html">LangevinFunctions module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MSDFunctions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#MSDFunctions.MSD"><code class="docutils literal notranslate"><span class="pre">MSD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#MSDFunctions.MSD.DSigma2_OLSF"><code class="docutils literal notranslate"><span class="pre">MSD.DSigma2_OLSF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MSDFunctions.MSD.DSigma2_OLSF_BootStrap"><code class="docutils literal notranslate"><span class="pre">MSD.DSigma2_OLSF_BootStrap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MSDFunctions.MSD.PMin_XM"><code class="docutils literal notranslate"><span class="pre">MSD.PMin_XM()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MSDFunctions.MSD.autocorrFFT"><code class="docutils literal notranslate"><span class="pre">MSD.autocorrFFT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#MSDFunctions.MSD.msd_fft"><code class="docutils literal notranslate"><span class="pre">MSD.msd_fft()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="PlottingFunctions.html">PlottingFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StatsFunctions.html">StatsFunctions module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyDiffusion_LeeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">MSDFunctions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MSDFunctions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-MSDFunctions">
+<span id="msdfunctions-module"></span><h1>MSDFunctions module<a class="headerlink" href="#module-MSDFunctions" title="Link to this heading"></a></h1>
+<p>Created on Tue Apr 23 14:30:10 2024</p>
+<p>&#64;author: jbeckwith</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="MSDFunctions.MSD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MSDFunctions.</span></span><span class="sig-name descname"><span class="pre">MSD</span></span><a class="headerlink" href="#MSDFunctions.MSD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MSDFunctions.MSD.DSigma2_OLSF">
+<span class="sig-name descname"><span class="pre">DSigma2_OLSF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.16666666666666666</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MSDFunctions.MSD.DSigma2_OLSF" title="Link to this definition"></a></dt>
+<dd><p>Compute diffusion coefficient estimate, and estimate of the
+dynamic localisation error, using the OLSF MSD approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coordinates</strong> (<em>numpy.ndarray</em>) – Input trajectory.</p></li>
+<li><p><strong>dT</strong> (<em>float</em>) – Time interval.</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – Motion blur coefficient.</p></li>
+<li><p><strong>n_d</strong> (<em>int</em>) – number of dimensions. If above 1, coordinates second
+dimension should be same shape as this number</p></li>
+<li><p><strong>maxiter</strong> (<em>int</em>) – Maximum number of iterations. Defaults to 100.</p></li>
+<li><p><strong>min_points</strong> (<em>int</em>) – minimum number of points for a diffusion estimate.
+Default is 10.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>D</strong> (<em>float</em>) – Diffusion coefficient estimate.</p></li>
+<li><p><strong>var</strong> (<em>float</em>) – var estimate.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MSDFunctions.MSD.DSigma2_OLSF_BootStrap">
+<span class="sig-name descname"><span class="pre">DSigma2_OLSF_BootStrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.16666666666666666</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MSDFunctions.MSD.DSigma2_OLSF_BootStrap" title="Link to this definition"></a></dt>
+<dd><p>Compute diffusion coefficient error estimate, and estimate of the
+dynamic localisation variance, using bootstrapping of the OLSF MSD approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coordinates</strong> (<em>numpy.ndarray</em>) – Input trajectory.</p></li>
+<li><p><strong>dT</strong> (<em>float</em>) – Time interval.</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – Motion blur coefficient.</p></li>
+<li><p><strong>n_d</strong> (<em>int</em>) – number of dimensions. If above 1, coordinates second
+dimension should be same shape as this number</p></li>
+<li><p><strong>maxiter</strong> (<em>int</em>) – Maximum number of iterations. Defaults to 100.</p></li>
+<li><p><strong>min_points</strong> (<em>int</em>) – minimum number of points for a diffusion estimate.
+Default is 10.</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>) – number of bootstrapped samples. Default 1000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>D_error</strong> (<em>float</em>) – Diffusion coefficient error estimate.</p></li>
+<li><p><strong>var_error</strong> (<em>float</em>) – var error estimate.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MSDFunctions.MSD.PMin_XM">
+<span class="sig-name descname"><span class="pre">PMin_XM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MSDFunctions.MSD.PMin_XM" title="Link to this definition"></a></dt>
+<dd><p>Calculate optimal fit point from XM formulas.
+These formulas use XM conventions for N. These differ from AB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – Input value.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Number of trajectory points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>pa</strong> (<em>int</em>) – Optimal fit point for parameter ‘a’.</p></li>
+<li><p><strong>pb</strong> (<em>int</em>) – Optimal fit point for parameter ‘b’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MSDFunctions.MSD.autocorrFFT">
+<span class="sig-name descname"><span class="pre">autocorrFFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MSDFunctions.MSD.autocorrFFT" title="Link to this definition"></a></dt>
+<dd><p>Compute the autocorrelation of a 1D signal using the
+Fast Fourier Transform (FFT) method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.ndarray</em>) – Input signal.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> (<em>numpy.ndarray</em>) – Autocorrelation of the input signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MSDFunctions.MSD.msd_fft">
+<span class="sig-name descname"><span class="pre">msd_fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MSDFunctions.MSD.msd_fft" title="Link to this definition"></a></dt>
+<dd><p>Compute the mean squared displacement (MSD) using the
+Fast Fourier Transform (FFT) method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>numpy.ndarray</em>) – Trajectory data, where each row represents the</p></li>
+<li><p><strong>steps.</strong> (<em>coordinates</em><em> of </em><em>a particle at different time</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>S</strong> (<em>numpy.ndarray</em>) – MSD computed for each time step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="LangevinFunctions.html" class="btn btn-neutral float-left" title="LangevinFunctions module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="PlottingFunctions.html" class="btn btn-neutral float-right" title="PlottingFunctions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Joseph S. Beckwith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
