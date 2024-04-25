@@ -10,7 +10,7 @@ A list of package requirements are noted in the "requirements.txt" file. These c
 
 `pip install -r requirements.txt`
 
-Documentation can be found at [read the docs](https://pydiffusion_leelab.readthedocs.io/).
+Documentation can be found at [read the docs](https://pydiffusion-leelab.readthedocs.io).
 
 The codes are based on optimal analyses for diffusion coefficients set out in four papers that are well worth a read.
 
