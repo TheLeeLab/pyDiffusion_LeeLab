@@ -202,9 +202,11 @@ class MSD():
     
     def PMin_XM(self, x, N):
         """
-        Calculate optimal fit point from XM formulas.
-        These formulas use XM conventions for N. These differ from AB.
-        
+        Calculate optimal fit point from formulae in Michalet, X. Mean Square 
+        Displacement Analysis of Single-Particle Trajectories with 
+        Localization Error: Brownian Motion in an Isotropic Medium. 
+        Phys. Rev. E 2010, 82 (4), 041914. https://doi.org/10.1103/PhysRevE.82.041914.
+                
         Args:
             x (float): Input value.
             N (int): Number of trajectory points.
