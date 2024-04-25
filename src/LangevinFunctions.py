@@ -86,14 +86,16 @@ class LF():
 
     def BrownianRot(self, DR, TStep, NSteps):
         """ BrownianRot function
-        # generates random rotational motion
-        # using DR and TStep
-        # ================INPUTS============= 
-        # DR is rotational diffusion coefficient
-        # TStep is time step relative to DT
-        # NSteps is number of steps to simulate
-        # ================OUTPUT============= 
-        # sph_coords are theta, phi over time """
+            generates random rotational motion
+            using DR and TStep
+        
+        Args:
+            DR (float): rotational diffusion coefficient
+            TStep (float): time step relative to DT
+            NSteps (int): number of steps to simulate
+        
+        Returns:
+            sph_coords (np.3Darray): are theta, phi over time """
 
         # generate spherical coordinates using method of Hunter, G. L.;
         # Edmond, K. V.; Elsesser, M. T.; Weeks, E. R. 

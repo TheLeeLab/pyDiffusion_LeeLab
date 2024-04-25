@@ -31,11 +31,18 @@ class Plotter():
     def two_column_plot(self, nrows=1, ncolumns=1, heightratio=[1], widthratio=[1], height=0):
         """ two_column_plot function
         takes data and makes a two-column width figure
-        ================INPUTS============= 
-        npanels is panel matrix
-        ratios is size ratios of panels
-        ================OUTPUT============= 
-        fig, axs are figure objects """
+        
+        Args:
+            nrows (int): number of rows
+            ncolumns (int): number of columns
+            heightratio (np.1darray): array of same length as number of rows
+            widthratio (np.1darray): array of same length as number of columns
+            height (float): if set, figure will be this height
+        
+        Returns:
+            fig (figure object): figure
+            axs (axes object): axes
+            """
         
         # first, check everything matches
         try:
@@ -92,82 +99,20 @@ class Plotter():
                     axs[i,j].yaxis.set_tick_params(width=0.5, length=lw*4)
                     axs[i,j].tick_params(axis='both', pad=1.2)
         return fig, axs
-    
-    def one_column_multirow_plot(self, nrows=1, ncolumns=1, heightratio=[1], widthratio=[1], height=0):
-        """ one_column_multirow_plot function
-        takes data and makes a one-column width figure
-        ================INPUTS============= 
-        npanels is panel matrix
-        ratios is size ratios of panels
-        ================OUTPUT============= 
-        fig, axs are figure objects """
-        
-        # first, check everything matches
-        try:
-            if len(heightratio) != nrows:
-                raise Exception('Number of height ratios incorrect')
-            if len(widthratio) != ncolumns:
-                raise Exception('Number of width ratios incorrect')
-        except Exception as error:
-            print('Caught this error: ' + repr(error))
-            return
-        
-        if self.poster == True:
-            fontsz = 12
-            lw = 1
-        else:
-            fontsz = 7
-            lw = 1
-
-        xsize = 3.33 # 3.33 inches for one-column figure
-        if height is not None:
-            ysize = np.min([height, 8.25]) # maximum size in y can be 8.25
-        else:
-            ysize = np.min([3.5*nrows, 8.25]) # maximum size in y can be 8.25
-        
-        plt.rcParams['figure.figsize'] = [xsize, ysize]
-        plt.rcParams['font.size'] = fontsz
-        plt.rcParams['svg.fonttype'] = 'none'
-        matplotlib.rcParams['pdf.fonttype'] = 42
-        matplotlib.rcParams['ps.fonttype'] = 42
-        plt.rcParams['axes.linewidth'] = lw # set the value globally
-        
-        fig, axs = plt.subplots(nrows, ncolumns, height_ratios=heightratio, 
-                                width_ratios=widthratio) # create number of panels
-
-
-        # clean up axes, tick parameters
-        if nrows*ncolumns == 1:
-            axs.xaxis.set_tick_params(width=lw, length=lw*4)
-            axs.yaxis.set_tick_params(width=lw, length=lw*4)
-            axs.tick_params(axis='both', pad=1.2)
-        elif nrows*ncolumns == 2:
-            for i in np.arange(2):
-                 axs[i].xaxis.set_tick_params(width=lw, length=lw*4)
-                 axs[i].yaxis.set_tick_params(width=lw, length=lw*4)
-                 axs[i].tick_params(axis='both', pad=1.2)
-        elif nrows*ncolumns == len(widthratio):
-            for i in np.arange(len(widthratio)):
-                 axs[i].xaxis.set_tick_params(width=lw, length=lw*4)
-                 axs[i].yaxis.set_tick_params(width=lw, length=lw*4)
-                 axs[i].tick_params(axis='both', pad=1.2)            
-        else:
-            for i in np.arange(nrows):
-                for j in np.arange(ncolumns):
-                    axs[i,j].xaxis.set_tick_params(width=0.5, length=lw*4)
-                    axs[i,j].yaxis.set_tick_params(width=0.5, length=lw*4)
-                    axs[i,j].tick_params(axis='both', pad=1.2)
-        return fig, axs
 
     def one_column_plot(self, npanels=1, ratios=[1], height=None):
         """ one_column_plot function
         takes data and makes a one-column width figure
-        ================INPUTS============= 
-        npanels is number of panels in the figure
-        ratios is size ratios of panels
-        height is figure height
-        ================OUTPUT============= 
-        fig, axs are figure objects """
+        
+        Args:
+            npanels (int): number of panels in the figure
+            ratios (np.1darray): size ratios of panels
+            height (float): figure height
+        
+        Returns:
+            fig (figure object): figure
+            axs (axes object): axes
+            """
         
         # first, check everything matches
         try:
@@ -251,18 +196,20 @@ class Plotter():
         histcolor='gray', xaxislabel='x axis', alpha=1, histtype='bar', density=True): 
         """ histogram_plot function
         takes data and makes a histogram
-        ================INPUTS============= 
-        data is data
-        bins are bins
-        xlim is x limits; default is None (which computes max/min)
-        ylim is y limits; default is None (which lets it keep its default)
-        histcolor is histogram colour (default is gray)
-        xaxislabel is x axis label (default is 'x axis')
-        alpha is histogram transparency (default 1)
-        density is if to plot as pdf, default yes
-        histtype is histogram type, default bar
-        ================OUTPUT============= 
-        axs is axis object """
+        
+        Args:
+            data (np.1darray): data array
+            bins (np.1darray): bin array
+            xlim (boolean or list of two floats): default is None (which computes min/max of x), otherwise provide a min/max
+            ylim (boolean or list of two floats): default is None (which computes min/max of y), otherwise provide a min/max
+            histcolor (string): histogram colour (default is gray)
+            xaxislabel (string): x axis label (default is 'x axis')
+            alpha (float): histogram transparency (default 1)
+            histtype (string): histogram type, default bar
+            density (boolean): if to plot as pdf, default True
+        
+        Returns:
+            axs (axis): axis object """
         if self.poster == True:
             fontsz = 15
         else:
@@ -286,21 +233,20 @@ class Plotter():
     def scatter_plot(self, axs, x, y, xlim=None, ylim=None, label='',
         edgecolor='k', facecolor='white', s=5, lw=0.75, xaxislabel='x axis', yaxislabel='y axis', alpha=1):
         """ scatter_plot function
-        takes data and makes a scatter plot
-        ================INPUTS============= 
-        x is x data
-        y os y data
-        xlim is x limits; default is None (which computes max/min)
-        ylim is y limits; default is None (which computes max/min)
-        label is label; default is nothing
-        edgecolor is edge colour; default is black
-        facecolor is face colour; default is white
-        s is size of scatter point; default is 5
-        lw is line width (default 0.75)
-        xaxislabel is x axis label (default is 'x axis')
-        yaxislabel is y axis label (default is 'y axis')
-        ================OUTPUT============= 
-        axs is axis object """
+        takes scatter data and makes an scatter plot
+        
+        Args:
+            xdata (np.1darray): scatter points, x
+            ydata (np.1darray): scatter points, y
+            xlim (np.1darray): x limits
+            ylim (np.1darray): y limits
+            label (string): any annotation
+            edgecolor (string): colour of scatter plot edges
+            facecolor (string): colour of scatter point faces
+            alpha (float): transparency of points
+        
+        Returns:
+            axs (axis): axis object """
         if self.poster == True:
             fontsz = 15
         else:
@@ -322,19 +268,21 @@ class Plotter():
                    labelcolor='black', pixelsize=69, scalebarsize=5000, scalebarlabel=r'5$\,\mu$m', alpha=1):
         """ image_plot function
         takes image data and makes an image plot
-        ================INPUTS============= 
-        data is image
-        vmin is minimum pixel displayed (default 99.9%)
-        vmax is maximum pixel displayed (default 0.1%)
-        cmap is colour map used; default gray
-        cbarlabel is colour bar label; default intensity
-        label is any annotation
-        labelcolor is annotation colour
-        pixelsize is pixel size in nm for scalebar, default 69
-        scalebarsize is scalebarsize in nm, default 5000
-        scalebarlabel is scale bar label, default 5 um
-        ================OUTPUT============= 
-        axs is axis object """
+        
+        Args:
+            data (np.2darray): image
+            vmin (float): minimum pixel intensity displayed (default 0.1%)
+            vmax (float): minimum pixel intensity displayed (default 99.9%)
+            cmap (string): colour map used; default gray)
+            cbarlabel (string): colour bar label; default 'photons'
+            label (string): is any annotation
+            labelcolor (string): annotation colour
+            pixelsize (float): pixel size in nm for scalebar, default 110
+            scalebarsize (float): scalebarsize in nm, default 5000
+            scalebarlabel (string): scale bar label, default 5 um
+        
+        Returns:
+            axs (axis): axis object """
         if vmin is None:
             vmin = np.percentile(data.ravel(), 0.1)
         if vmax is None:
