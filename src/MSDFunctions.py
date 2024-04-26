@@ -6,7 +6,7 @@ Created on Tue Apr 23 14:30:10 2024
 @author: jbeckwith
 """
 import numpy as np
-
+from numba import jit
 
 class MSD():
     def __init__(self):
@@ -200,7 +200,9 @@ class MSD():
         S = S1-2*S2
         return S[1:]
     
-    def PMin_XM(self, x, N):
+    @staticmethod
+    @jit(nopython=True)
+    def PMin_XM(x, N):
         """
         Calculate optimal fit point from formulae in Michalet, X. Mean Square 
         Displacement Analysis of Single-Particle Trajectories with 

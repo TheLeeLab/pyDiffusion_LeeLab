@@ -11,6 +11,7 @@ sys.path.append("..") # Adds higher directory to python modules path.
 import numpy as np
 import scipy.optimize
 from scipy.fft import dst
+from numba import jit
 
 class D_MLE():
     def __init__(self):
@@ -133,7 +134,9 @@ class D_MLE():
         var = xopt[1]
         return D, np.sqrt(var)
         
-    def likelihood_subfunction(self, d_xx, D, sig2, dT, R, n_d=1):
+    @staticmethod
+    @jit(nopython=True)
+    def likelihood_subfunction(d_xx, D, sig2, dT, R, n_d=1):
         """
         Compute log-likelihood for trajectories of particle tracking.
     
@@ -154,14 +157,6 @@ class D_MLE():
             # Return negative infinity if D or sig2 is negative
             return -np.inf
     
-        if n_d > 1:
-            try:
-                if d_xx.shape[1] != n_d:
-                    raise Exception('Dimension of d_xx and n_d are inconsistent.')
-            except Exception as error:
-                print('Caught this error: ' + repr(error))
-                return
-            
         L = 0. # initialise L
         N = d_xx.shape[0]
         # Calculate parameters for the likelihood computation

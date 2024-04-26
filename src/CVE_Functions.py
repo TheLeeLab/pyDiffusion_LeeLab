@@ -7,6 +7,7 @@ Created on Mon Sep  4 10:00:36 2023
 """
 
 import numpy as np
+from numba import jit
 
 class CVE():
     def __init__(self):
@@ -66,7 +67,6 @@ class CVE():
         var_err = np.nanmean(var_d_i, axis=0)
         return np.nanstd(D_err), np.nanstd(np.sqrt(var_err))
 
-    
     def DSigma_CVE(self, coordinates, dT, R=1./6, n_d=1, min_points=10):
         """
         Compute diffusion coefficient estimate, and estimate of the
@@ -115,8 +115,9 @@ class CVE():
         var = np.mean(var_d)
         return D, np.sqrt(var)
 
-    
-    def Eq14(self, x, dT, R=1./6, min_points=10):
+    @staticmethod
+    @jit(nopython=True)
+    def Eq14(x, dT, R=1./6, min_points=10):
         """ CVE_Eq14 function
         takes positions and uses equation 14 from
         Vestergaard, C. L.; Blainey, P. C.; Flyvbjerg, H
@@ -134,17 +135,7 @@ class CVE():
         Returns:
             D (float): diffusion coefficient estimate
             varD (float): variance of D 
-        """
-        try:
-            if x.shape[0] < min_points:
-                raise Exception("""Not enough points to calculate a reliable estimate of diffusion coefficient.
-                                Please see section V of Michalet and Berglund, Optimal Diffusion Coefficient Estimation
-                                in Single-Particle Tracking. Phys. Rev. E 2012, 85 (6), 061916. https://doi.org/10.1103/PhysRevE.85.061916.""")
-        except Exception as error:
-            print('Caught this error: ' + repr(error))
-            return np.NAN, np.NAN
-
-        
+        """        
         diffX = np.diff(x)
         mult = np.mean(np.multiply(diffX[:-1], diffX[1:]))
         deltaX_sqr = np.mean(np.square(diffX))
@@ -157,7 +148,9 @@ class CVE():
         varD = np.multiply(np.square(D), (((6 + 4*epsilon + 2*np.square(epsilon))/N) + ((4*np.square(1+epsilon))/np.square(N))))
         return D, sigma, varD
     
-    def Eq16(self, x, sigma, dT, R=1./6, min_points=10):
+    @staticmethod
+    @jit(nopython=True)
+    def Eq16(x, sigma, dT, R=1./6, min_points=10):
         """ CVE_Eq16 function
         takes positions and uses equation 16 from
         Vestergaard, C. L.; Blainey, P. C.; Flyvbjerg, H
