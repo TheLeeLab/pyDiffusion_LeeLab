@@ -85,6 +85,8 @@ class LF():
                 dim = nanlocs_dim[i]
                 if t == 0:
                     initial_coordinates[mol, t, dim] = initial_coordinates[mol, t+1, dim]/2. # crude approximation
+                elif t == N-1:
+                    initial_coordinates[mol, t, dim] = initial_coordinates[mol, t-1, dim]*2. # crude approximation
                 else:
                     initial_coordinates[mol, t, dim] = 0.5*(initial_coordinates[mol, t-1, dim] 
                                                             + initial_coordinates[mol, t+1, dim]) # crude approximation
