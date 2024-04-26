@@ -8,11 +8,129 @@ Created on Mon Sep  4 10:00:36 2023
 
 import numpy as np
 from scipy.sparse import diags_array
+from scipy.spatial.distance import cdist
 
 class LF():
     def __init__(self):
         self = self
         return
+    
+    def MultiBrownianTrans_Volume(self, DT, N, n_d, deltaT, tE, sigma0, s0, 
+                                  n_molecules=10, volume=np.array([8,8,8]), 
+                                  bleach_probability=0., 
+                                  R=1./6, min_track_length=10):
+        """ MultiBrownianTrans_Volume function
+        Generates displacements Delta from equations 2--5
+        of Michalet, X.; Berglund, A. J.
+        Phys. Rev. E 2012, 85 (6), 061916.
+        https://doi.org/10.1103/PhysRevE.85.061916.
+        More realistic Brownian motion assuming tracked with a camera
+        Simulates a specific volume 
+        Will split tracks that reach sigma0 from each other
+
+        Args:
+            DT (float): translational diffusion coefficient
+            N (int): number of steps to simulate
+            n_d (int): mumber of dimensions of diffusion
+            deltaT (flaot): time step between data points
+            tE (float): camera exposure duration (can be same as deltaT)
+            sigma0 (float): static localisation error
+            s0 (float): standard deviation of the PSF
+            n_molecules (int): number of molecules simualted in the volume
+            volume (np.1darray): dimensions of volume simulated, in same units as DT
+                                (same number of dimensions as n_d)
+            bleach_probability (float): if above 0, assigns a random 
+                                        proportion of frames to "off" and 
+                                        replaces them with interpolation.
+            R (float): motion blur coefficient (see Equation 5 of paper)
+
+        Returns:
+            coordinates (dict): coordinates of n_molecules over time
+        """
+        try:
+            if bleach_probability > 0.5:
+                raise Exception("""Function won't be able to find enough points
+                                to interpolate between if bleaching probability
+                                is above 50 percent!""")
+        except Exception as error:
+            print('Caught this error: ' + repr(error))
+            return
+
+        initial_coordinates = np.zeros([n_molecules, N, n_d]) # make initial tensor
+        for n in np.arange(n_molecules):
+            limits = 0
+            while limits == 0:
+                starting_position = np.zeros(n_d)
+                for axis in np.arange(n_d):
+                    starting_position[axis] = np.random.uniform(low=0., high=volume[axis])
+                single_track = starting_position + self.BrownianTrans_Realistic(DT, N, 
+                                            n_d, deltaT, tE, sigma0, s0, R) # make single track
+                if np.any(np.max(single_track, axis=0) > volume) or np.any(np.min(single_track, axis=0) < np.zeros(3)):
+                    limits = 0
+                else:
+                    initial_coordinates[n, :, :] = single_track
+                    limits = 1
+        
+        # now remove steps due to bleaching
+        if bleach_probability > 0:
+            to_delete = initial_coordinates.ravel()
+            deletion_indices = np.random.choice(np.arange(len(to_delete)), 
+                                size=int(bleach_probability*len(to_delete)))
+            to_delete[deletion_indices] = np.NAN
+            initial_coordinates = to_delete.reshape(initial_coordinates.shape)
+            nanlocs_mol, nanlocs_t, nanlocs_dim = np.where(np.isnan(initial_coordinates))
+            for i in np.arange(len(nanlocs_mol)):
+                mol = nanlocs_mol[i]
+                t = nanlocs_t[i]
+                dim = nanlocs_dim[i]
+                if t == 0:
+                    initial_coordinates[mol, t, dim] = initial_coordinates[mol, t+1, dim]/2. # crude approximation
+                else:
+                    initial_coordinates[mol, t, dim] = 0.5*(initial_coordinates[mol, t-1, dim] 
+                                                            + initial_coordinates[mol, t+1, dim]) # crude approximation
+        
+        # now chop up the tracks if they get too close
+        coordinates = {}
+        initial_n = 0
+        molecule_list = np.arange(n_molecules)
+        for n in molecule_list:
+            other_molecule_list = molecule_list[molecule_list != n]
+            distance_between_molecules = np.zeros([N, n_molecules-1])
+            for i, k in enumerate(other_molecule_list): # need some while loop here
+                molecular_track = initial_coordinates[n, :, :]
+                other_molecular_track = initial_coordinates[k, :, :]
+                distance_between_molecules[:, i] = np.diag(cdist(molecular_track, 
+                                                    other_molecular_track))
+            min_distances = np.min(distance_between_molecules, axis=0)
+            break_point = np.where(min_distances < sigma0)[0]
+            if len(break_point) > 0:
+                if len(break_point) == 1:
+                    b = break_point[0]
+                    if len(molecular_track[:b, :]) > min_track_length:
+                        coordinates[initial_n] = molecular_track[:b, :]
+                        initial_n += 1
+                    if len(molecular_track[b:, :]) > min_track_length:
+                        coordinates[initial_n] = molecular_track[b:, :]
+                        initial_n += 1
+                else:
+                    for i, b in enumerate(break_point):
+                        if b == break_point[0]:
+                            if len(molecular_track[:b, :]) > min_track_length:
+                                coordinates[initial_n] = molecular_track[:b, :]
+                                initial_n += 1
+                        elif b == break_point[-1]:
+                            if len(molecular_track[b:, :]) > min_track_length:
+                                coordinates[initial_n] = molecular_track[:b, :]
+                                initial_n += 1
+                        else:
+                            if len(molecular_track[break_point[i-1]:b, :]) > min_track_length:
+                                coordinates[initial_n] = molecular_track[break_point[i-1]:b, :]
+                                initial_n += 1
+            else:
+                coordinates[initial_n] = molecular_track
+                initial_n += 1
+            
+        return coordinates
     
     def BrownianTrans_Realistic(self, DT, N, n_d, deltaT, tE, sigma0, s0, R=1./6):
         """ BrownianTrans_Realistic function

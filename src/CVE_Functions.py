@@ -7,7 +7,6 @@ Created on Mon Sep  4 10:00:36 2023
 """
 
 import numpy as np
-from numba import jit
 
 class CVE():
     def __init__(self):
@@ -115,9 +114,7 @@ class CVE():
         var = np.mean(var_d)
         return D, np.sqrt(var)
 
-    @staticmethod
-    @jit(nopython=True)
-    def Eq14(x, dT, R=1./6, min_points=10):
+    def Eq14(self, x, dT, R=1./6, min_points=10):
         """ CVE_Eq14 function
         takes positions and uses equation 14 from
         Vestergaard, C. L.; Blainey, P. C.; Flyvbjerg, H
@@ -148,9 +145,7 @@ class CVE():
         varD = np.multiply(np.square(D), (((6 + 4*epsilon + 2*np.square(epsilon))/N) + ((4*np.square(1+epsilon))/np.square(N))))
         return D, sigma, varD
     
-    @staticmethod
-    @jit(nopython=True)
-    def Eq16(x, sigma, dT, R=1./6, min_points=10):
+    def Eq16(self, x, sigma, dT, R=1./6, min_points=10):
         """ CVE_Eq16 function
         takes positions and uses equation 16 from
         Vestergaard, C. L.; Blainey, P. C.; Flyvbjerg, H
