@@ -263,6 +263,49 @@ class Plotter():
         axs.set_xlabel(xaxislabel, fontsize=fontsz)
         axs.set_ylabel(yaxislabel, fontsize=fontsz)    
         return axs
+    
+    def kusumi_plot(self, axs, deltaT, MSD, xlim=None, ylim=None, label='',
+                    edgecolor='k', facecolor='white', alpha=1, s=5, lw=0.75,
+                    xaxislabel=r'$\Delta$t', yaxislabel=r'MSD/4$\Delta$t'):
+        """ kusumi_plot function
+        takes MSD and deltaT and makes a kusumi plot
+        
+        Args:
+            axs (axis): axis object
+            data (np.2darray): image
+            deltaT (np.1darray): deltaT array
+            MSD (np.1darray): MSD array
+            xlim (np.1darray): x limits
+            ylim (np.1darray): y limits
+            label (str): label of data
+            edgecolor (str): colour of edges (default black)
+            facecolor (str): colour of face (default white)
+            alpha (float): transparency of scatter point (default 1)
+            s (float): size of data point
+            lw (float): line with (default 0.75)
+            xaxislabel (string): x axis label (default $\Delta$t)
+            yaxislabel (string): x axis label (default MSD/4$\Delta$t)
+        
+        Returns:
+            axs (axis): axis object """
+        if self.poster == True:
+            fontsz = 15
+        else:
+            fontsz = 8
+        
+        if xlim is None:
+            xlim = np.array([np.min(deltaT), np.max(deltaT)])
+        if ylim is None:
+            ylim = np.array([np.min(MSD), np.max(MSD)])
+        axs.scatter(deltaT, MSD, s=s, edgecolors=edgecolor, facecolor=facecolor, lw=lw, label=label, alpha=alpha)
+        axs.set_xlim(xlim)
+        axs.set_ylim(ylim)
+        axs.grid(True,which="both",ls="--",c='gray', lw=0.25, alpha=0.25)  
+        axs.set_xlabel(xaxislabel, fontsize=fontsz)
+        axs.set_ylabel(yaxislabel, fontsize=fontsz)    
+
+        return axs
+
 
     def image_plot(self, axs, data, vmin=None, vmax=None, cmap='binary', cbar='on', cbarlabel='intensity', label='', 
                    labelcolor='black', pixelsize=69, scalebarsize=5000, scalebarlabel=r'5$\,\mu$m', alpha=1):
