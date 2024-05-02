@@ -99,8 +99,21 @@ class Plotter():
                     axs[i,j].yaxis.set_tick_params(width=0.5, length=lw*4)
                     axs[i,j].tick_params(axis='both', pad=1.2)
         return fig, axs
+    
+    def multi3Dtrack_plot(self, axs, coordinates_dict, 
+                          lw=0.75, label='', xaxislabel='x axis', 
+                          yaxislabel='y axis', zaxislabel='z axis',
+                          ls='-'):
 
-    def one_column_plot(self, npanels=1, ratios=[1], height=None):
+        for key in coordinates_dict.keys():
+            data = coordinates_dict[key]
+            x = data[:, 0]; y = data[:, 1]; z = data[:, 2]
+            axs.plot(x, y, z, lw=lw, ls=ls)
+            
+        axs.set(xlabel=xaxislabel, ylabel=yaxislabel, zlabel=zaxislabel)
+        return axs
+
+    def one_column_plot(self, npanels=1, ratios=[1], height=None, threedim=False):
         """ one_column_plot function
         takes data and makes a one-column width figure
         
@@ -108,6 +121,7 @@ class Plotter():
             npanels (int): number of panels in the figure
             ratios (np.1darray): size ratios of panels
             height (float): figure height
+            threedim (boolean): if True, make a 3D projection figure
         
         Returns:
             fig (figure object): figure
@@ -142,7 +156,10 @@ class Plotter():
         matplotlib.rcParams['ps.fonttype'] = 42
         plt.rcParams['axes.linewidth'] = lw # set the value globally
         
-        fig, axs = plt.subplots(npanels, 1, height_ratios=ratios) # create number of panels
+        if threedim == True:
+            fig, axs = plt.subplots(npanels, 1, height_ratios=ratios, subplot_kw=dict(projection='3d')) # create number of panels
+        else:
+            fig, axs = plt.subplots(npanels, 1, height_ratios=ratios) # create number of panels
 
 
         # clean up axes, tick parameters
@@ -292,17 +309,21 @@ class Plotter():
             fontsz = 15
         else:
             fontsz = 8
-        
+        y = MSD/(4*deltaT)
         if xlim is None:
             xlim = np.array([np.min(deltaT), np.max(deltaT)])
         if ylim is None:
-            ylim = np.array([np.min(MSD), np.max(MSD)])
-        axs.scatter(deltaT, MSD, s=s, edgecolors=edgecolor, facecolor=facecolor, lw=lw, label=label, alpha=alpha)
+            ylim = np.array([np.min(y)/10, np.max(y)*10])
+        
+        axs.scatter(deltaT, y, s=s, edgecolors=edgecolor, facecolor=facecolor, lw=lw, label=label, alpha=alpha)
         axs.set_xlim(xlim)
         axs.set_ylim(ylim)
         axs.grid(True,which="both",ls="--",c='gray', lw=0.25, alpha=0.25)  
         axs.set_xlabel(xaxislabel, fontsize=fontsz)
         axs.set_ylabel(yaxislabel, fontsize=fontsz)    
+        
+        axs.set_yscale('log')
+
 
         return axs
 
