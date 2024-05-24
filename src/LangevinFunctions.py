@@ -9,11 +9,71 @@ Created on Mon Sep  4 10:00:36 2023
 import numpy as np
 from scipy.sparse import diags_array
 from scipy.spatial.distance import cdist
+import pathos
+from pathos.pools import ThreadPool as Pool
+cpu_number = int(pathos.helpers.cpu_count()*0.8)
 
 class LF():
     def __init__(self):
         self = self
         return
+    
+    def MultiBrownianTrans_Par(self, DT, N, n_d, deltaT, tE, sigma0, s0, 
+                                  n_molecules=10, volume=np.array([8,8,8]),  
+                                  R=1./6, min_track_length=3):
+        """ MultiBrownianTrans_Volume function
+        Generates displacements Delta from equations 2--5
+        of Michalet, X.; Berglund, A. J.
+        Phys. Rev. E 2012, 85 (6), 061916.
+        https://doi.org/10.1103/PhysRevE.85.061916.
+        More realistic Brownian motion assuming tracked with a camera
+        Simulates a specific volume 
+        Will split tracks that reach sigma0 from each other
+
+        Args:
+            DT (float): translational diffusion coefficient
+            N (int): number of steps to simulate
+            n_d (int): mumber of dimensions of diffusion
+            deltaT (flaot): time step between data points
+            tE (float): camera exposure duration (can be same as deltaT)
+            sigma0 (float): static localisation error
+            s0 (float): standard deviation of the PSF
+            n_molecules (int): number of molecules simualted in the volume
+            volume (np.1darray): dimensions of volume simulated, in same units as DT
+                                (same number of dimensions as n_d)
+            R (float): motion blur coefficient (see Equation 5 of paper)
+
+        Returns:
+            coordinates (dict): coordinates of n_molecules over time
+        """
+
+        coordinates = {} # make initial dict
+        
+        def generate_multiple_molecules(n):
+            limits = 0
+            while limits == 0:
+                starting_position = np.zeros(n_d)
+                for axis in np.arange(n_d):
+                    starting_position[axis] = np.random.uniform(low=0., high=volume[axis])
+                single_track = starting_position + self.BrownianTrans_Realistic(DT, N, 
+                                            n_d, deltaT, tE, sigma0, s0, R) # make single track
+                if np.any(np.max(single_track, axis=0) > volume) or np.any(np.min(single_track, axis=0) < np.zeros(3)):
+                    cutlimit = np.min(np.hstack([np.where(single_track > volume)[0], 
+                                                 np.where(single_track < np.zeros(3))[0]]))
+                    if cutlimit < min_track_length:
+                        limits = 0
+                    else:
+                        coordinates[n] = single_track[:cutlimit, :]
+                else:
+                    coordinates[n] = single_track
+                    limits = 1
+        
+        pool = Pool(nodes=cpu_number); pool.restart()
+        pool.map(generate_multiple_molecules, np.arange(n_molecules))
+        pool.close(); pool.terminate()
+            
+        return coordinates
+
     
     def MultiBrownianTrans_Volume(self, DT, N, n_d, deltaT, tE, sigma0, s0, 
                                   n_molecules=10, volume=np.array([8,8,8]), 
