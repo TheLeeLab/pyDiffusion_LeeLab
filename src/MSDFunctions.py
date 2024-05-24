@@ -151,6 +151,7 @@ class MSD():
                     newpb = self.PMin_XM(xb, NXM)
                     if np.any(np.isin(newpb, pb)):
                         D = bb / (2 * dT * n_d)
+                        var = (bb + 4 * D * R * dT) / (2 * n_d)
                         doneb = True
                     pb = np.hstack([pb, newpb])
                 iter += 1
