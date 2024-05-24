@@ -71,7 +71,7 @@ class D_MLE():
                              np.tile(np.mean(diff_coordinates, axis=0),
                                      (len(coordinates) - 1, 1)))
             
-            sine_transform = np.square(dst(dX, 2, axis=0)/2.)
+            sine_transform = np.square(dst(dX, 1, axis=0)/2.)
             optimfunc = lambda x: -self.likelihood_subfunction(sine_transform, x[0], x[1], dT, R, n_d)
             xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], maxiter=maxiter, maxfun=maxfun, disp=False)
             D_err[i] = xopt[0]
@@ -127,9 +127,11 @@ class D_MLE():
                          np.tile(np.mean(np.diff(coordinates, axis=0), axis=0),
                                  (len(coordinates) - 1, 1)))
         
-        sine_transform = np.square(dst(dX, 2, axis=0)/2.)
+        sine_transform = np.square(dst(dX, 1, axis=0)/2.)
         optimfunc = lambda x: -self.likelihood_subfunction(sine_transform, x[0], x[1], dT, R, n_d)
-        xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], maxiter=maxiter, maxfun=maxfun, disp=False)
+        xopt = scipy.optimize.fmin(func=optimfunc, x0=[D_i, sigma2_i], 
+                                   maxiter=maxiter, 
+                                   maxfun=maxfun, disp=False)
         D = xopt[0]
         var = xopt[1]
         return D, np.sqrt(var)
