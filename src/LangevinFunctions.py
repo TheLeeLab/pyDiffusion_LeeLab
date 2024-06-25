@@ -64,6 +64,7 @@ class LF():
                         limits = 0
                     else:
                         coordinates[n] = single_track[:cutlimit, :]
+                        limits = 1
                 else:
                     coordinates[n] = single_track
                     limits = 1

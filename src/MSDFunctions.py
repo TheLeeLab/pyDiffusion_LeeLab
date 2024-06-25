@@ -61,7 +61,7 @@ class MSD():
             D_err[i], var_err[i] = self.DSigma2_OLSF(new_coordinates, dT, R=R, n_d=n_d)
         return np.std(D_err), np.std(var_err)
     
-    def DSigma2_OLSF(self, coordinates, dT, R=1./6, n_d=1, maxiter=100, min_points=10):
+    def DSigma2_OLSF(self, coordinates, dT, R=1./6, n_d=1, maxiter=100, min_points=10, supress_warning=False):
         """
         Compute diffusion coefficient estimate, and estimate of the
         dynamic localisation error, using the OLSF MSD approach.
@@ -118,13 +118,14 @@ class MSD():
                 rho = rho[:np.max(np.hstack([pa, pb]))]
                 if not donea:
                     A = np.vstack((np.ones(pa[-1]), np.arange(1, pa[-1] + 1))).T
-                    B = rho[:A.shape[0]]
+                    B = np.asarray(rho[:A.shape[0]])
                     if B.shape[0] != A.shape[0]:
                         donea = True
                         doneb = True
                         D = np.nan
                         var = np.nan
-                        print('OLSF did not converge in {} iterations'.format(maxiter))
+                        if supress_warning == False:
+                            print('OLSF did not converge in {} iterations'.format(maxiter))
                         return D, var
                     X = np.linalg.lstsq(A, B, rcond=None)[0]
                     aa, ba = X
@@ -137,13 +138,14 @@ class MSD():
                     pa = np.hstack([pa, newpa])
                 if not doneb:
                     A = np.vstack((np.ones(pb[-1]), np.arange(1, pb[-1] + 1))).T
-                    B = rho[:int(pb[-1])]
+                    B = np.asarray(rho[:int(pb[-1])])
                     if B.shape[0] != A.shape[0]:
                         donea = True
                         doneb = True
                         D = np.nan
                         var = np.nan
-                        print('OLSF did not converge in {} iterations'.format(maxiter))
+                        if supress_warning == False:
+                            print('OLSF did not converge in {} iterations'.format(maxiter))
                         return D, var
                     X = np.linalg.lstsq(A, B, rcond=None)[0]
                     ab, bb = X
